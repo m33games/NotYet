@@ -55,6 +55,7 @@ public class Main extends Applet implements Runnable {
 			hero.load("hero.png");
 			
 			level = new Map();
+			hero.updateMap(level);
 		}
 
 		public void update(Graphics g) {
@@ -123,7 +124,7 @@ public class Main extends Applet implements Runnable {
 		}
 
 		public void gameUpdate(double delta) {
-			hero.move(keyboard.keyState(), level, delta);
+			hero.move(keyboard.keyState(), delta);
 		}
 		
 }

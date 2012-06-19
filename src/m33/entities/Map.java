@@ -70,6 +70,29 @@ public class Map {
 		return false;
 	}
 
+	public boolean bottomCollision(Hero hero) {
+		int heroR = (int) hero.getPosY() / TILE_SIZE;
+		int heroC = (int) hero.getPosX() / TILE_SIZE;
+		int dC = (int) hero.getWidth() / TILE_SIZE;
+		int dR = (int) hero.getHeight() / TILE_SIZE;
+
+		int r = heroR + dR;
+
+		for (int c = heroC; c <= heroC + dC; c++) {
+			currentLevel[r][c].checked();
+			if (currentLevel[r][c] != null && currentLevel[r][c].isSolid()) {
+				if (currentLevel[r][c].getHitBox().contains(hero.getPosX(),
+						hero.getPosY() + hero.getHeight())
+						|| currentLevel[r][c].getHitBox().contains(
+								hero.getPosX() + hero.getWidth(),
+								hero.getPosY() + hero.getHeight())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public void drawMap(Graphics2D g, Applet a) {
 		for (int i = 0; i < level1.getCol(); i++) {
 			for (int j = 0; j < level1.getRows(); j++) {
