@@ -12,6 +12,7 @@ public class Hero extends Entity {
 	private final int ACC_X = 50;
 	private final int MAX_VEL_Y = 400;
 	private final int MAX_VEL_X = 400;
+	private final int AIR_ACC_X = 5;
 
 	private int jumpState = FALLING;
 	private long startJumpTime;
@@ -39,25 +40,39 @@ public class Hero extends Entity {
 		case JUMPING:
 			jumpingMove(key);
 			break;
-		case AIR:
-			airMove(key);
-			break;
+		// case AIR:
+		// airMove(key);
+		// break;
 		case FALLING:
 			fallingMove(key);
+			break;
+		default:
+			jumpState = FALLING;
 			break;
 		}
 	}
 
 	public void groundMove(PressedKey key) {
+
+		if(currentLevel.hole(this)){
+			jumpState = FALLING;
+		}
+		
 		if (key.isUp()) {
 			startJumpTime = System.currentTimeMillis();
 			jumpState = JUMPING;
 			setVelY(-400);
-			incPosY(getVelY()*delta);
+			incPosY(getVelY() * delta);
+
+			if (currentLevel.verticalCollision(this)) {
+				jumpState = FALLING;
+				setVelY(0);
+			}
 		}
 		if (key.isDown()) {
-
+			// TODO: what?
 		}
+
 		if (key.isRight()) {
 			if (getVelX() < MAX_VEL_X) {
 				incVelX(ACC_X);
@@ -73,25 +88,33 @@ public class Hero extends Entity {
 				setVelX(-MAX_VEL_X);
 			}
 		}
+
 		if (!key.isRight() && !key.isLeft()) {
-			if (getVelX() > 0) {
+			if (getVelX() > 20) {
 				incVelX(-ACC_X);
-			} else if (getVelX() < 0) {
+			} else if (getVelX() < -20) {
 				incVelX(ACC_X);
+			} else {
+				setVelX(0.0);
 			}
 		}
 
+		// Move hor and check hor collision
 		incPosX(getVelX() * delta);
+		currentLevel.horizontalCollision(this);
+		
 	}
 
 	public void jumpingMove(PressedKey key) {
-		incPosY(getVelY()*delta);
-		if((System.currentTimeMillis() - startJumpTime) > 100){
+		if ((System.currentTimeMillis() - startJumpTime) > 300) {
 			jumpState = FALLING;
 		}
-	}
 
-	public void airMove(PressedKey key) {
+		incPosY(getVelY() * delta);
+		currentLevel.verticalCollision(this);
+
+		airHorMove(key);
+		currentLevel.horizontalCollision(this);
 
 	}
 
@@ -103,9 +126,40 @@ public class Hero extends Entity {
 		}
 
 		incPosY(getVelY() * delta);
-
-		if (currentLevel.bottomCollision(this)) {
+		if (currentLevel.verticalCollision(this)) {
 			jumpState = GROUND;
+			// Error...if it hits the ceilling it is put to ground state
 		}
+
+		airHorMove(key);
+		currentLevel.horizontalCollision(this);
 	}
+
+	public void airHorMove(PressedKey key) {
+		if (key.isRight()) {
+			if (getVelX() < MAX_VEL_X) {
+				incVelX(AIR_ACC_X);
+			} else if (getVelX() > MAX_VEL_X) {
+				setVelX(MAX_VEL_X);
+			}
+		}
+
+		if (key.isLeft()) {
+			if (getVelX() > -MAX_VEL_X) {
+				incVelX(-AIR_ACC_X);
+			} else if (getVelX() < -MAX_VEL_X) {
+				setVelX(-MAX_VEL_X);
+			}
+		}
+		if (!key.isRight() && !key.isLeft()) {
+			if (getVelX() > 0) {
+				incVelX(-AIR_ACC_X);
+			} else if (getVelX() < 0) {
+				incVelX(AIR_ACC_X);
+			}
+		}
+
+		incPosX(getVelX() * delta);
+	}
+
 }

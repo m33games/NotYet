@@ -16,10 +16,10 @@ public class Tile {
 	private final int SIZE = 32;
 	private Image tileImg;
 	private Loader loader;
-	
+
 	private Point pos;
 	private Rectangle2D hitBox;
-	
+
 	private boolean checked;
 	private boolean solid;
 
@@ -27,39 +27,56 @@ public class Tile {
 		loader = new Loader();
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		tileImg = tk.getImage(loader.getURL(s));
-		
+
 		checked = false;
 		solid = false;
-		
-		pos = new Point(x*SIZE, y*SIZE);
-		
-		hitBox = new Rectangle2D.Double(pos.getX(), pos.getY(), (double) SIZE, (double) SIZE);
+
+		pos = new Point(x * SIZE, y * SIZE);
+
+		hitBox = new Rectangle2D.Double(pos.getX(), pos.getY(), (double) SIZE,
+				(double) SIZE);
 	}
-	
-	public void setSolid(boolean s){
+
+	public void setSolid(boolean s) {
 		solid = s;
 	}
 
 	public void draw(Graphics2D g, Applet a) {
 		g.drawImage(tileImg, pos.x, pos.y, a);
-		if(checked){
+		if (checked) {
 			g.setColor(Color.white);
 			g.drawRect(pos.x, pos.y, SIZE, SIZE);
 			checked = false;
 		}
 	}
-	
+
 	// ACCESSORS
-	public Rectangle2D getHitBox(){
+	public Rectangle2D getHitBox() {
 		return hitBox;
 	}
-	
-	public void checked(){
+
+	public void checked() {
 		checked = true;
 	}
-	
-	public boolean isSolid(){
+
+	public boolean isSolid() {
 		return solid;
+	}
+
+	public double getTop() {
+		return pos.getY();
+	}
+
+	public double getBottom() {
+		return pos.getY() + SIZE - 1;
+	}
+	
+	public double getLeft(){
+		return pos.getX();
+	}
+	
+	public double getRight(){
+		return pos.getX() + SIZE - 1;
 	}
 
 }

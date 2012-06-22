@@ -10,6 +10,9 @@ public class PressedKey {
 	private boolean isSpace = false;
 	private boolean isEsc = false;
 	
+	private boolean wasRight = false;
+	private boolean wasLeft = false;
+	
 	/*
 	 * Constructor
 	 */
@@ -45,6 +48,14 @@ public class PressedKey {
 	public boolean isEsc() {
 		return isEsc;
 	}
+	
+	public boolean wasLeft(){
+		return wasLeft;
+	}
+	
+	public boolean wasRight(){
+		return wasRight;
+	}
 
 	// Modifiers
 	public void Up(boolean up) {
@@ -73,5 +84,13 @@ public class PressedKey {
 
 	public void Esc(boolean esc) {
 		isEsc = esc;
+	}
+	
+	public void setWasLeft(boolean wl){
+		wasLeft = wl;
+	}
+	
+	public void setWasRight(boolean wr){
+		wasRight = wr;
 	}
 }

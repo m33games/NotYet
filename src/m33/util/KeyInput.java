@@ -22,9 +22,17 @@ public class KeyInput extends Object implements KeyListener {
 			break;
 		case KeyEvent.VK_LEFT:
 			keyboard.Left(true);
+			if (keyboard.isRight()) {
+				keyboard.Right(false);
+				keyboard.setWasRight(true);
+			}
 			break;
 		case KeyEvent.VK_RIGHT:
 			keyboard.Right(true);
+			if (keyboard.isLeft()) {
+				keyboard.Left(false);
+				keyboard.setWasLeft(true);
+			}
 			break;
 		case KeyEvent.VK_ENTER:
 			keyboard.Enter(true);
@@ -50,9 +58,19 @@ public class KeyInput extends Object implements KeyListener {
 			break;
 		case KeyEvent.VK_LEFT:
 			keyboard.Left(false);
+			keyboard.setWasLeft(false);
+			if(keyboard.wasRight()){
+				keyboard.Right(true);
+				keyboard.setWasRight(false);
+			}
 			break;
 		case KeyEvent.VK_RIGHT:
 			keyboard.Right(false);
+			keyboard.setWasRight(false);
+			if(keyboard.wasLeft()){
+				keyboard.Left(true);
+				keyboard.setWasLeft(false);
+			}
 			break;
 		case KeyEvent.VK_ENTER:
 			keyboard.Enter(false);
@@ -71,8 +89,8 @@ public class KeyInput extends Object implements KeyListener {
 		// TODO Auto-generated method stub
 
 	}
-	
-	public PressedKey keyState(){
+
+	public PressedKey keyState() {
 		return keyboard;
 	}
 
