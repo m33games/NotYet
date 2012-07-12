@@ -13,6 +13,8 @@ public class Entity {
 	// Constants
 	private final int WIDTH = 32;
 	private final int HEIGHT = 32;
+	
+	private final int TILE_SIZE = 32;
 
 	private Point2D pos;
 	private Point2D oldPos;
@@ -22,6 +24,8 @@ public class Entity {
 
 	private Image image;
 	private Loader loader;
+	
+	protected Camera camera;
 
 	private boolean debug;
 
@@ -39,6 +43,10 @@ public class Entity {
 	}
 
 	// Accessors
+	public Camera getCamera(){
+		return camera;
+	}
+	
 	public Rectangle2D getHitBox() {
 		return hitBox;
 	}
@@ -141,6 +149,10 @@ public class Entity {
 	public void incVel(double x, double y) {
 		vel.setLocation(vel.getX() + x, vel.getY() + y);
 	}
+	
+	public void setCamera(Camera camera){
+		this.camera = camera;
+	}
 
 	// ////////////////////////////////////////////////
 	public void load(String s) {
@@ -149,9 +161,12 @@ public class Entity {
 	}
 
 	public void draw(Graphics2D g, Applet a) {
-		g.drawImage(image, (int) pos.getX(), (int) pos.getY(), a);
+		int localX = (int) (pos.getX() - camera.getXOff());
+		int localY = (int) (pos.getY() - camera.getYOff());
+		
+		g.drawImage(image, localX, localY, a);
 		if (debug) {
-			g.drawRect((int) pos.getX(), (int) pos.getY(), WIDTH, HEIGHT);
+			g.drawRect(localX, localY, WIDTH, HEIGHT);
 		}
 	}
 

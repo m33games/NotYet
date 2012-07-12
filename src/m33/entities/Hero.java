@@ -1,5 +1,9 @@
 package m33.entities;
 
+import java.applet.Applet;
+import java.awt.Graphics2D;
+
+import m33.util.CameraBox;
 import m33.util.PressedKey;
 
 public class Hero extends Entity {
@@ -8,21 +12,26 @@ public class Hero extends Entity {
 	private final int AIR = 2;
 	private final int FALLING = 3;
 
-	private final int ACC_GRAVITY = 50;
-	private final int ACC_X = 50;
+	private final int ACC_GRAVITY = 20;
+	private final int ACC_X = 40;
 	private final int MAX_VEL_Y = 400;
 	private final int MAX_VEL_X = 400;
-	private final int AIR_ACC_X = 5;
+	private final int AIR_ACC_X = 20;
 
 	private int jumpState = FALLING;
 	private long startJumpTime;
 
 	private double delta;
 	private Map currentLevel;
+	
+	public CameraBox cameraBox;
 
 	public Hero() {
 		super();
+		setPosX(100.0);
 		jumpState = FALLING;
+		
+		cameraBox = new CameraBox();
 	}
 
 	public void updateMap(Map level) {
@@ -50,6 +59,8 @@ public class Hero extends Entity {
 			jumpState = FALLING;
 			break;
 		}
+		
+		cameraBox.update(this);
 	}
 
 	public void groundMove(PressedKey key) {
@@ -64,7 +75,7 @@ public class Hero extends Entity {
 			setVelY(-400);
 			incPosY(getVelY() * delta);
 
-			if (currentLevel.verticalCollision(this)) {
+			if (currentLevel.topCollision(this)) {
 				jumpState = FALLING;
 				setVelY(0);
 			}
@@ -106,12 +117,17 @@ public class Hero extends Entity {
 	}
 
 	public void jumpingMove(PressedKey key) {
-		if ((System.currentTimeMillis() - startJumpTime) > 300) {
+		if ((System.currentTimeMillis() - startJumpTime) > 130) {
 			jumpState = FALLING;
 		}
 
 		incPosY(getVelY() * delta);
-		currentLevel.verticalCollision(this);
+		
+		if(currentLevel.topCollision(this)){
+			setVelY(0.0);
+			jumpState = FALLING;
+		}
+		currentLevel.bottomCollision(this);
 
 		airHorMove(key);
 		currentLevel.horizontalCollision(this);
@@ -126,10 +142,12 @@ public class Hero extends Entity {
 		}
 
 		incPosY(getVelY() * delta);
-		if (currentLevel.verticalCollision(this)) {
+		if (currentLevel.bottomCollision(this)) {
 			jumpState = GROUND;
-			// Error...if it hits the ceilling it is put to ground state
+			// Error...if it hits the ceiling it is put to ground state
 		}
+		
+		currentLevel.topCollision(this);
 
 		airHorMove(key);
 		currentLevel.horizontalCollision(this);
@@ -162,4 +180,15 @@ public class Hero extends Entity {
 		incPosX(getVelX() * delta);
 	}
 
+
+	public void what(){
+		System.out.println("hero is at " + getPosX());
+	}
+	
+	public void drawBox(Graphics2D g, Applet a) {
+		int localX = (int) (cameraBox.getX() - camera.getXOff());
+		int localY = (int) (cameraBox.getY() - camera.getYOff());
+		
+		cameraBox.draw(g, camera);
+	}
 }

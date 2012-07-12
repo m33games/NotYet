@@ -22,8 +22,11 @@ public class Tile {
 
 	private boolean checked;
 	private boolean solid;
+	private boolean visible;
 
 	public Tile(String s, int x, int y) {
+		// I can't load them each time, it takes too long
+		
 		loader = new Loader();
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		tileImg = tk.getImage(loader.getURL(s));
@@ -33,20 +36,30 @@ public class Tile {
 
 		pos = new Point(x * SIZE, y * SIZE);
 
-		hitBox = new Rectangle2D.Double(pos.getX(), pos.getY(), (double) SIZE,
-				(double) SIZE);
+		//hitBox = new Rectangle2D.Double(pos.getX(), pos.getY(), (double) SIZE,
+		//		(double) SIZE);
+		
+		visible = true;
+	}
+
+	public Tile() {
+		visible = false;
 	}
 
 	public void setSolid(boolean s) {
 		solid = s;
 	}
 
-	public void draw(Graphics2D g, Applet a) {
-		g.drawImage(tileImg, pos.x, pos.y, a);
-		if (checked) {
-			g.setColor(Color.white);
-			g.drawRect(pos.x, pos.y, SIZE, SIZE);
-			checked = false;
+	public void draw(Graphics2D g, Applet a, Point offset) {
+
+		if (visible) {
+			g.drawImage(tileImg, pos.x - offset.x, pos.y - offset.y, a);
+			//g.fillRect(pos.x, pos.y, SIZE, SIZE);
+			if (checked) {
+				g.setColor(Color.white);
+				g.drawRect(pos.x - offset.x, pos.y - offset.y, SIZE, SIZE);
+				checked = false;
+			}
 		}
 	}
 
@@ -70,12 +83,12 @@ public class Tile {
 	public double getBottom() {
 		return pos.getY() + SIZE - 1;
 	}
-	
-	public double getLeft(){
+
+	public double getLeft() {
 		return pos.getX();
 	}
-	
-	public double getRight(){
+
+	public double getRight() {
 		return pos.getX() + SIZE - 1;
 	}
 
