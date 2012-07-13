@@ -29,7 +29,7 @@ public class Level {
 		cm = new ChunkManager();
 
 		// Level size is fixed for now, it may become dynamic
-		level = new char[2000][2000];
+		level = new char[1000][2000];
 		
 		loadSingleFile("chunkTest");
 		

@@ -22,16 +22,18 @@ public class Map {
 	private boolean loaded = false;
 
 	private final int TILE_SIZE = 32;
+	private TileManager tm;
 
-	private Tile[][] currentLevel;
+	//private Tile[][] currentLevel;
 
 	public Map() {
 		loader = new Loader();
+		tm = new TileManager();
 		loadLevel();
 		
 		// Load level 1 tileSheet
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		levelImg = tk.getImage(loader.getURL("level1.png"));
+		//Toolkit tk = Toolkit.getDefaultToolkit();
+		//levelImg = tk.getImage(loader.getURL("level1.png"));
 	}
 
 	public void loadLevel() {
@@ -39,21 +41,21 @@ public class Map {
 		loaded = true;
 
 		double milli = System.currentTimeMillis();
-		// the generation of all the tiles it too slow, it requires too much time...
-		// I should generate them while playing if possible
 		
-		currentLevel = new Tile[level1.getRows()][level1.getCol()];
+		tm.newLevel(level1.getRows(), level1.getCol());
+		
 		for (int r = 0; r < level1.getRows(); r++) {
 			for (int c = 0; c < level1.getCol(); c++) {
 				if (level1.level[r][c] == '#') {
 					//currentLevel[r][c] = new Tile("block1.png", c, r);
-					currentLevel[r][c] = new Tile("level.png", c, r);
-					currentLevel[r][c].setSolid(true);
+					tm.cl[r][c] = new Tile(2, c, r);
+					tm.cl[r][c].setSolid(true);
 				} else {
-					
+					tm.cl[r][c] = new Tile(3, c, r);
+					tm.cl[r][c].setSolid(false);
 					
 					//currentLevel[r][c] = new Tile("block2.png", c, r);
-					currentLevel[r][c] = new Tile();
+					//tm.cl[r][c] = new Tile();
 				}
 			}
 		}
@@ -80,8 +82,8 @@ public class Map {
 		c = heroRight;
 
 		for (r = heroTop; r <= heroBottom; r++) {
-			currentLevel[r][c].checked();
-			if (currentLevel[r][c] != null && currentLevel[r][c].isSolid()) {
+			tm.cl[r][c].checked();
+			if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
 						hero.setPosX((double) (c * TILE_SIZE) - hero.getWidth());
 						return true;
 			}
@@ -91,8 +93,8 @@ public class Map {
 		c = heroLeft;
 
 		for (r = heroTop; r <= heroBottom; r++) {
-			currentLevel[r][c].checked();
-			if (currentLevel[r][c] != null && currentLevel[r][c].isSolid()) {
+			tm.cl[r][c].checked();
+			if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
 						hero.setPosX((double) (c * TILE_SIZE) + hero.getWidth());
 						return true;
 			}
@@ -114,8 +116,8 @@ public class Map {
 		r = heroTop;
 
 		for (c = heroLeft; c <= heroRight; c++) {
-			currentLevel[r][c].checked();
-			if (currentLevel[r][c] != null && currentLevel[r][c].isSolid()) {
+			tm.cl[r][c].checked();
+			if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
 						hero.setPosY((double) (r * TILE_SIZE) + hero.getHeight());
 						return true;
 			}
@@ -138,8 +140,8 @@ public class Map {
 		r = heroBottom;
 
 		for (c = heroLeft; c <= heroRight; c++) {
-			currentLevel[r][c].checked();
-			if (currentLevel[r][c] != null && currentLevel[r][c].isSolid()) {
+			tm.cl[r][c].checked();
+			if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
 						hero.setPosY((double) (r * TILE_SIZE) - hero.getHeight());
 						return true;				
 			}
@@ -161,7 +163,7 @@ public class Map {
 		boolean ground = true;
 		
 		for (c = heroLeft; c <= heroRight; c++){
-			ground = ground && currentLevel[r][c].isSolid();
+			ground = ground && tm.cl[r][c].isSolid();
 		}
 		
 		return !ground;
@@ -170,11 +172,13 @@ public class Map {
 	public void drawMap(Graphics2D g, Applet a) {
 		Point offset = new Point((int) camera.getXOff(), (int) camera.getYOff());
 		
-		for (int i = 0; i < level1.getCol(); i++) {
-			for (int j = 0; j < level1.getRows(); j++) {
-				currentLevel[j][i].draw(g, a, offset);
-			}
-		}
+		tm.draw(g, offset);
+		
+		//for (int i = 0; i < level1.getCol(); i++) {
+		//	for (int j = 0; j < level1.getRows(); j++) {
+		//		currentLevel[j][i].draw(g, a, offset);
+		//	}
+		//}
 	}
 	
 	public boolean isLoaded(){

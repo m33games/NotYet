@@ -19,17 +19,21 @@ public class Tile {
 
 	private Point pos;
 	private Rectangle2D hitBox;
+	private int index;
 
 	private boolean checked;
 	private boolean solid;
 	private boolean visible;
 
-	public Tile(String s, int x, int y) {
+	public Tile(int index, int x, int y) {
 		// I can't load them each time, it takes too long
 		
-		loader = new Loader();
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		tileImg = tk.getImage(loader.getURL(s));
+		//loader = new Loader();
+		//Toolkit tk = Toolkit.getDefaultToolkit();
+		//tileImg = tk.getImage(loader.getURL("level1.png"));
+		
+		//tileImg = levelImg;
+		this.index = index;
 
 		checked = false;
 		solid = false;
@@ -54,7 +58,7 @@ public class Tile {
 
 		if (visible) {
 			//g.drawImage(tileImg, pos.x - offset.x, pos.y - offset.y, a);
-			g.drawImage(tileImg, pos.x - offset.x, pos.y - offset.y, pos.x - offset.x + SIZE, pos.y - offset.y + SIZE, 32*3, 0, 32*4 -1, 31, a);
+			g.drawImage(tileImg, pos.x - offset.x, pos.y - offset.y, pos.x - offset.x + SIZE, pos.y - offset.y + SIZE, 32*2, 0, 32*(2+1) -1, 31, a);
 			//g.fillRect(pos.x, pos.y, SIZE, SIZE);
 			if (checked) {
 				g.setColor(Color.white);
@@ -82,7 +86,7 @@ public class Tile {
 	}
 
 	public double getBottom() {
-		return pos.getY() + SIZE - 1;
+		return pos.getY() + SIZE;
 	}
 
 	public double getLeft() {
@@ -90,7 +94,11 @@ public class Tile {
 	}
 
 	public double getRight() {
-		return pos.getX() + SIZE - 1;
+		return pos.getX() + SIZE;
+	}
+	
+	public int index(){
+		return index;
 	}
 
 }
