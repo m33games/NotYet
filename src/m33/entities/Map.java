@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 
 import javax.imageio.ImageIO;
 
@@ -27,6 +28,10 @@ public class Map {
 	public Map() {
 		loader = new Loader();
 		loadLevel();
+		
+		// Load level 1 tileSheet
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		levelImg = tk.getImage(loader.getURL("level1.png"));
 	}
 
 	public void loadLevel() {
@@ -41,7 +46,8 @@ public class Map {
 		for (int r = 0; r < level1.getRows(); r++) {
 			for (int c = 0; c < level1.getCol(); c++) {
 				if (level1.level[r][c] == '#') {
-					currentLevel[r][c] = new Tile("block1.png", c, r);
+					//currentLevel[r][c] = new Tile("block1.png", c, r);
+					currentLevel[r][c] = new Tile("level.png", c, r);
 					currentLevel[r][c].setSolid(true);
 				} else {
 					

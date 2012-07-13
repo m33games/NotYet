@@ -53,7 +53,8 @@ public class Tile {
 	public void draw(Graphics2D g, Applet a, Point offset) {
 
 		if (visible) {
-			g.drawImage(tileImg, pos.x - offset.x, pos.y - offset.y, a);
+			//g.drawImage(tileImg, pos.x - offset.x, pos.y - offset.y, a);
+			g.drawImage(tileImg, pos.x - offset.x, pos.y - offset.y, pos.x - offset.x + SIZE, pos.y - offset.y + SIZE, 32*3, 0, 32*4 -1, 31, a);
 			//g.fillRect(pos.x, pos.y, SIZE, SIZE);
 			if (checked) {
 				g.setColor(Color.white);
