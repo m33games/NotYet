@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -18,18 +19,25 @@ public class Map {
 	private Image levelImg;
 	private Loader loader;
 	private Camera camera;
+	private Hero heroPointer;
 	
 	private boolean loaded = false;
 
 	private final int TILE_SIZE = 32;
 	private TileManager tm;
+	
+	private Random rand;
 
 	//private Tile[][] currentLevel;
 
 	public Map() {
+
+		rand = new Random();
+		
 		loader = new Loader();
 		tm = new TileManager();
 		loadLevel();
+		
 		
 		// Load level 1 tileSheet
 		//Toolkit tk = Toolkit.getDefaultToolkit();
@@ -42,6 +50,8 @@ public class Map {
 
 		double milli = System.currentTimeMillis();
 		
+		System.out.println("r " + level1.getRows() + " c " + level1.getCol());
+		
 		tm.newLevel(level1.getRows(), level1.getCol());
 		
 		for (int r = 0; r < level1.getRows(); r++) {
@@ -51,7 +61,8 @@ public class Map {
 					tm.cl[r][c] = new Tile(2, c, r);
 					tm.cl[r][c].setSolid(true);
 				} else {
-					tm.cl[r][c] = new Tile(3, c, r);
+					int x = rand.nextInt(3)+3;
+					tm.cl[r][c] = new Tile(x, c, r);
 					tm.cl[r][c].setSolid(false);
 					
 					//currentLevel[r][c] = new Tile("block2.png", c, r);
@@ -169,10 +180,10 @@ public class Map {
 		return !ground;
 	}
 
-	public void drawMap(Graphics2D g, Applet a) {
+	public void drawMap(Graphics2D g, Applet a, Hero hero) {
 		Point offset = new Point((int) camera.getXOff(), (int) camera.getYOff());
 		
-		tm.draw(g, offset);
+		tm.draw(g, offset, hero);
 		
 		//for (int i = 0; i < level1.getCol(); i++) {
 		//	for (int j = 0; j < level1.getRows(); j++) {

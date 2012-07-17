@@ -23,6 +23,8 @@ public class Level {
 	private ChunkManager cm;
 
 	private Random rand;
+	
+	private int anchor;
 
 	public Level() {
 		rand = new Random();
@@ -30,6 +32,7 @@ public class Level {
 
 		// Level size is fixed for now, it may become dynamic
 		level = new char[1000][2000];
+		anchor = 100;
 		
 		loadSingleFile("chunkTest");
 		
@@ -39,17 +42,20 @@ public class Level {
 		 * for now it load all the chunks in series, from 1 to 4, and it compose
 		 * them in a single level
 		 */
-		for (int i = 1; i < 50; i++) {
+		for (int i = 1; i < 10; i++) {
 			
 			int j = rand.nextInt(4) + 1;
 
-			char[][] a = cm.getChunk(j).getArray();
+			Chunk ch = cm.getChunk(j);
+			char[][] a = ch.getArray();
 
 			for (int r = 0; r < a.length; r++) {
 				for (int c = 0; c < a[0].length; c++) {
-					level[r][c + totCol] = a[r][c];
+					System.out.println("s " + r + " cc " + c);
+					level[r + anchor - ch.getAnchorIn()][c + totCol] = a[r][c];
 				}
 			}
+			anchor = anchor - (ch.getAnchorIn() - ch.getAnchorOut());
 
 			totCol += a[0].length;
 		}
@@ -59,7 +65,7 @@ public class Level {
 	}
 
 	public int getRows() {
-		return ROWS;
+		return 1000;
 	}
 
 	public int getCol() {
@@ -102,6 +108,11 @@ public class Level {
 							
 							tempChunk.setChunk(row,col);
 							tempArray = tempChunk.getArray();
+						} else if (command[0].equals("anchor")){
+							int aIn = Integer.parseInt(command[1]);
+							int aOut = Integer.parseInt(command[2]);
+							
+							tempChunk.setAnchors(aIn, aOut);
 						}
 						
 					}

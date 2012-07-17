@@ -5,6 +5,9 @@ public class Chunk {
 	// private variables
 	private char[][] localChunk;
 	private int id;
+	private int time;
+	private int anchorIn;
+	private int anchorOut;
 	
 	// public variables
 	
@@ -39,6 +42,14 @@ public class Chunk {
 		return localChunk;
 	}
 	
+	public int getAnchorIn(){
+		return anchorIn;
+	}
+	
+	public int getAnchorOut(){
+		return anchorOut;
+	}
+	
 	// modificators
 	public void setID(int id){
 		this.id = id;
@@ -46,5 +57,10 @@ public class Chunk {
 
 	public void setChunk(int r, int c){
 		localChunk = new char[r][c];
+	}
+	
+	public void setAnchors(int aIn, int aOut){
+		anchorIn = aIn;
+		anchorOut = aOut;
 	}
 }

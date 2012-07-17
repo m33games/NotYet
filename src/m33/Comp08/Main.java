@@ -109,7 +109,7 @@ public class Main extends Applet implements Runnable {
 			g2d.setColor(Color.BLACK);
 			g2d.fillRect(0, 0, SCREEN_W, SCREEN_H);
 
-			level.drawMap(g2d, this);
+			level.drawMap(g2d, this, hero);
 			hero.drawBox(g2d, this);
 			hero.draw(g2d, this);
 			death.draw(g2d, this);

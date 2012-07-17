@@ -117,7 +117,9 @@ public class Hero extends Entity {
 	}
 
 	public void jumpingMove(PressedKey key) {
-		if ((System.currentTimeMillis() - startJumpTime) > 130) {
+		if (!key.isUp()){
+			jumpState = FALLING;
+		} else if ((System.currentTimeMillis() - startJumpTime) > 130) {
 			jumpState = FALLING;
 		}
 
