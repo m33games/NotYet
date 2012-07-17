@@ -32,7 +32,7 @@ public class Level {
 
 		// Level size is fixed for now, it may become dynamic
 		level = new char[1000][2000];
-		anchor = 100;
+		anchor = 990;
 		
 		loadSingleFile("chunkTest");
 		
@@ -42,16 +42,15 @@ public class Level {
 		 * for now it load all the chunks in series, from 1 to 4, and it compose
 		 * them in a single level
 		 */
-		for (int i = 1; i < 10; i++) {
+		for (int i = 1; i < 50; i++) {
 			
-			int j = rand.nextInt(4) + 1;
+			int j = rand.nextInt(5) + 1;
 
 			Chunk ch = cm.getChunk(j);
 			char[][] a = ch.getArray();
 
 			for (int r = 0; r < a.length; r++) {
 				for (int c = 0; c < a[0].length; c++) {
-					System.out.println("s " + r + " cc " + c);
 					level[r + anchor - ch.getAnchorIn()][c + totCol] = a[r][c];
 				}
 			}

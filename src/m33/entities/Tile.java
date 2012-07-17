@@ -21,9 +21,11 @@ public class Tile {
 	private Rectangle2D hitBox;
 	private int index;
 
-	private boolean checked;
-	private boolean solid;
-	private boolean visible;
+	private boolean checked = false;
+	private boolean solid = false;
+	private boolean visible = false;
+	private boolean death = false;
+	private boolean animated = false;
 
 	public Tile(int index, int x, int y) {
 		// I can't load them each time, it takes too long
@@ -35,8 +37,8 @@ public class Tile {
 		//tileImg = levelImg;
 		this.index = index;
 
-		checked = false;
-		solid = false;
+		//checked = false;
+		//solid = false;
 
 		pos = new Point(x * SIZE, y * SIZE);
 
@@ -53,8 +55,16 @@ public class Tile {
 	public void setSolid(boolean s) {
 		solid = s;
 	}
+	
+	public void setDeath(boolean d){
+		death = d;
+	}
 
 	public void draw(Graphics2D g, Applet a, Point offset) {
+		
+		if (animated) {
+			//checks if it needs to be animated
+		}
 
 		if (visible) {
 			//g.drawImage(tileImg, pos.x - offset.x, pos.y - offset.y, a);
@@ -99,6 +109,10 @@ public class Tile {
 	
 	public int index(){
 		return index;
+	}
+	
+	public boolean isDeath(){
+		return death;
 	}
 
 }

@@ -22,7 +22,7 @@ public class Entity {
 
 	private Rectangle2D hitBox;
 
-	private Image image;
+	protected Image image;
 	private Loader loader;
 	
 	protected Camera camera;
