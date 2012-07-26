@@ -17,11 +17,12 @@ public class Hero extends Entity {
 	private final int AIR = 2;
 	private final int FALLING = 3;
 
-	private final int ACC_GRAVITY = 20;
+	private final int ACC_GRAVITY = 40;
 	private final int ACC_X = 40;
-	private final int MAX_VEL_Y = 400;
+	private final int MAX_VEL_Y = 500;
 	private final int MAX_VEL_X = 400;
-	private final int AIR_ACC_X = 20;
+	private final int AIR_ACC_X = 13;
+	private final int JUMP_TIME = 190;
 	
 	private final int ANIM_RATE = 1000/10;
 	private double lastAnim;
@@ -136,7 +137,7 @@ public class Hero extends Entity {
 	public void jumpingMove(PressedKey key) {
 		if (!key.isUp()) {
 			jumpState = FALLING;
-		} else if ((System.currentTimeMillis() - startJumpTime) > 130) {
+		} else if ((System.currentTimeMillis() - startJumpTime) > JUMP_TIME) {
 			jumpState = FALLING;
 		}
 

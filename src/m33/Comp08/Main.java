@@ -11,6 +11,7 @@ import java.util.Random;
 
 import m33.entities.Camera;
 import m33.entities.Death;
+import m33.entities.EntityManager;
 import m33.entities.Hero;
 import m33.entities.Map;
 import m33.util.FontManager;
@@ -44,6 +45,7 @@ public class Main extends Applet implements Runnable {
 	private Camera camera;
 	private MainMenu mainMenu;
 	private Death death;
+	private EntityManager entities;
 
 	private GeneratingScreen generate;
 
@@ -77,6 +79,8 @@ public class Main extends Applet implements Runnable {
 		fontManager = new FontManager();
 		
 		generate = new GeneratingScreen(SCREEN_W, SCREEN_H);
+		
+		entities = new EntityManager();
 	}
 
 	public void gameReset() {
@@ -93,6 +97,9 @@ public class Main extends Applet implements Runnable {
 
 		death = new Death();
 		death.setCamera(camera);
+		
+		// should I create a reset method in entityManager?
+		entities = new EntityManager();
 	}
 
 	public void update(Graphics g) {
@@ -205,6 +212,8 @@ public class Main extends Applet implements Runnable {
 
 	public void gameUpdate(double delta) {
 		//System.out.println("delta is " +delta);
+		
+		
 		hero.move(keyboard.keyState(), delta);
 		death.move(delta);
 

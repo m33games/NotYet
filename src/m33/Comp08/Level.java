@@ -5,9 +5,12 @@ import java.util.Random;
 
 import m33.entities.Chunk;
 import m33.entities.ChunkManager;
+import m33.entities.EntityManager;
+import m33.entities.Platform;
 
 public class Level {
 	public char[][] level;
+	private final int TILE_SIZE = 32;
 
 	private final int ROWS;
 	private final int COL;
@@ -21,6 +24,7 @@ public class Level {
 	private char[][] nextChunk;
 	private char[][][] chunks;
 	private ChunkManager cm;
+	private EntityManager em;
 
 	private Random rand;
 	
@@ -29,6 +33,7 @@ public class Level {
 	public Level() {
 		rand = new Random();
 		cm = new ChunkManager();
+		em = new EntityManager();
 
 		// Level size is fixed for now, it may become dynamic
 		level = new char[1000][2000];
@@ -48,6 +53,16 @@ public class Level {
 
 			Chunk ch = cm.getChunk(j);
 			char[][] a = ch.getArray();
+			
+			// create entities
+			for (int k = 0; k < ch.getMovNum() ; k++){
+				int sx = ch.sx[k]*TILE_SIZE;
+				int ex = ch.ex[k]*TILE_SIZE;
+				int sy = ch.sy[k]*TILE_SIZE;
+				int ey = ch.ey[k]*TILE_SIZE;
+				Platform p = new Platform(sx, ex, sy, ey);
+				
+			}
 
 			for (int r = 0; r < a.length; r++) {
 				for (int c = 0; c < a[0].length; c++) {
@@ -101,17 +116,25 @@ public class Level {
 							// save chunk ID
 							tempChunk.setID(id);
 							cm.add(id, tempChunk);
-						} else if (command[0].equals("size")){
+						} else if (command[0].equals("size")){		// size
 							int row = Integer.parseInt(command[1]);
 							int col = Integer.parseInt(command[2]);
 							
 							tempChunk.setChunk(row,col);
 							tempArray = tempChunk.getArray();
-						} else if (command[0].equals("anchor")){
+						} else if (command[0].equals("anchor")){	// anchor
 							int aIn = Integer.parseInt(command[1]);
 							int aOut = Integer.parseInt(command[2]);
-							
 							tempChunk.setAnchors(aIn, aOut);
+						} else if (command[0].equals("movNum")){	// movable number
+							int num = Integer.parseInt(command[1]);
+							tempChunk.setPlatformNum(num);
+						} else if (command[0].equals("mov")){	// movable platforms
+							int sx = Integer.parseInt(command[1]);
+							int ex = Integer.parseInt(command[2]);
+							int sy = Integer.parseInt(command[3]);
+							int ey = Integer.parseInt(command[4]);
+							tempChunk.setPlatform(sx, ex, sy, ey);
 						}
 						
 					}

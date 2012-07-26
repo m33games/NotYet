@@ -42,8 +42,9 @@ public class TileManager {
 					cl[r][c] = new Tile(2, c, r);
 					cl[r][c].setSolid(true);
 				} else if(level.level[r][c] == 'x'){
-					cl[r][c] = new Tile(1, c, r);
-					cl[r][c].setDeath(true);					
+					cl[r][c] = new Tile(6, c, r);
+					cl[r][c].setDeath(true);
+					cl[r][c].setAnimated(true);					
 				} else {
 					int x = rand.nextInt(3) + 3;
 					cl[r][c] = new Tile(x, c, r);
@@ -64,6 +65,8 @@ public class TileManager {
 
 				if (i >= 0 && i < cols && j >= 0 && j < rows) {
 					Tile currentTile = cl[j][i];
+					
+					currentTile.update();
 
 					g.drawImage(levelImg, (int) currentTile.getLeft()
 							- offset.x, (int) currentTile.getTop() - offset.y,
