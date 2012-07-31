@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -30,21 +31,21 @@ public class Map {
 
 	// private Tile[][] currentLevel;
 
-	public Map() {
+	public Map(EntityManager em) {
 
 		rand = new Random();
 
 		loader = new Loader();
 		tm = new TileManager();
-		loadLevel();
+		loadLevel(em);
 
 		// Load level 1 tileSheet
 		// Toolkit tk = Toolkit.getDefaultToolkit();
 		// levelImg = tk.getImage(loader.getURL("level1.png"));
 	}
 
-	public void loadLevel() {
-		level1 = new Level();
+	public void loadLevel(EntityManager em) {
+		level1 = new Level(em);
 		loaded = true;
 
 		double milli = System.currentTimeMillis();
@@ -76,11 +77,11 @@ public class Map {
 	}
 
 	public boolean horizontalCollision(Hero hero) {
-		int heroLeft = (int) hero.getPosX() / TILE_SIZE;
-		int heroRight = (int) (hero.getPosX() + hero.getWidth() - 1)
+		int heroLeft = (int) hero.getHitBox().getX() / TILE_SIZE;
+		int heroRight = (int) (hero.getHitBox().getX() + hero.getHitSize().getX() - 1)
 				/ TILE_SIZE;
-		int heroTop = (int) hero.getPosY() / TILE_SIZE;
-		int heroBottom = (int) (hero.getPosY() + hero.getHeight() - 1)
+		int heroTop = (int) hero.getHitBox().getY() / TILE_SIZE;
+		int heroBottom = (int) (hero.getHitBox().getY() + hero.getHitSize().getY() - 1)
 				/ TILE_SIZE;
 
 		int c;
@@ -94,7 +95,7 @@ public class Map {
 			if (tm.cl[r][c] != null && tm.cl[r][c].isDeath()) {
 				hero.dies();
 			} else if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
-				hero.setPosX((double) (c * TILE_SIZE) - hero.getWidth());
+				hero.setPosX((double) (c * TILE_SIZE) - hero.getHitSize().getX());
 				return true;
 			}
 		}
@@ -105,7 +106,7 @@ public class Map {
 		for (r = heroTop; r <= heroBottom; r++) {
 			tm.cl[r][c].checked();
 			if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
-				hero.setPosX((double) (c * TILE_SIZE) + hero.getWidth());
+				hero.setPosX((double) (c * TILE_SIZE) + hero.getHitSize().getX());
 				return true;
 			}
 		}
@@ -114,10 +115,10 @@ public class Map {
 	}
 
 	public boolean topCollision(Hero hero) {
-		int heroLeft = (int) hero.getPosX() / TILE_SIZE;
-		int heroRight = (int) (hero.getPosX() + hero.getWidth() - 1)
+		int heroLeft = (int) hero.getHitBox().getX() / TILE_SIZE;
+		int heroRight = (int) (hero.getHitBox().getX() + hero.getHitSize().getX() - 1)
 				/ TILE_SIZE;
-		int heroTop = (int) hero.getPosY() / TILE_SIZE;
+		int heroTop = (int) hero.getHitBox().getY() / TILE_SIZE;
 
 		int c;
 		int r;
@@ -130,7 +131,7 @@ public class Map {
 			if (tm.cl[r][c] != null && tm.cl[r][c].isDeath()) {
 				hero.dies();
 			} else if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
-				hero.setPosY((double) (r * TILE_SIZE) + hero.getHeight());
+				hero.setPosY((double) (r * TILE_SIZE) + hero.getHitSize().getY());
 				return true;
 			}
 		}
@@ -138,11 +139,11 @@ public class Map {
 	}
 
 	public boolean bottomCollision(Hero hero) {
-		int heroLeft = (int) hero.getPosX() / TILE_SIZE;
-		int heroRight = (int) (hero.getPosX() + hero.getWidth() - 1)
+		int heroLeft = (int) hero.getHitBox().getX() / TILE_SIZE;
+		int heroRight = (int) (hero.getHitBox().getX() + hero.getHitSize().getX() - 1)
 				/ TILE_SIZE;
-		int heroTop = (int) hero.getPosY() / TILE_SIZE;
-		int heroBottom = (int) (hero.getPosY() + hero.getHeight() - 1)
+		int heroTop = (int) hero.getHitBox().getY() / TILE_SIZE;
+		int heroBottom = (int) (hero.getHitBox().getY() + hero.getHitSize().getY() - 1)
 				/ TILE_SIZE;
 
 		int c;
@@ -160,7 +161,7 @@ public class Map {
 			for (c = heroLeft; c <= heroRight; c++) {
 				tm.cl[r][c].checked();
 				if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
-					hero.setPosY((double) (r * TILE_SIZE) - hero.getHeight());
+					hero.setPosY((double) (r * TILE_SIZE) - hero.getHitSize().getY());
 					return true;
 				}
 			}
@@ -170,10 +171,10 @@ public class Map {
 	}
 
 	public boolean hole(Hero hero) {
-		int heroLeft = (int) hero.getPosX() / TILE_SIZE;
-		int heroRight = (int) (hero.getPosX() + hero.getWidth() - 1)
+		int heroLeft = (int) hero.getHitBox().getX() / TILE_SIZE;
+		int heroRight = (int) (hero.getHitBox().getX() + hero.getHitSize().getX() - 1)
 				/ TILE_SIZE;
-		int heroUnderFeet = (int) (hero.getPosY() + hero.getHeight())
+		int heroUnderFeet = (int) (hero.getHitBox().getY() + hero.getHitSize().getY())
 				/ TILE_SIZE;
 
 		int c;

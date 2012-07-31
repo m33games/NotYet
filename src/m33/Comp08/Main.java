@@ -79,27 +79,29 @@ public class Main extends Applet implements Runnable {
 		fontManager = new FontManager();
 		
 		generate = new GeneratingScreen(SCREEN_W, SCREEN_H);
-		
-		entities = new EntityManager();
+
+		//entities = new EntityManager();
 	}
 
 	public void gameReset() {
+		// should I create a reset method in entityManager?
+		entities = new EntityManager();
+		
 		hero = new Hero();
 		hero.load("hero.png");
 
-		level = new Map();
+		level = new Map(entities);
 		hero.updateMap(level);
 
 		camera = new Camera();
 
 		hero.setCamera(camera);
 		level.setCamera(camera);
+		entities.setCamera(camera);
 
 		death = new Death();
 		death.setCamera(camera);
 		
-		// should I create a reset method in entityManager?
-		entities = new EntityManager();
 	}
 
 	public void update(Graphics g) {
@@ -117,6 +119,8 @@ public class Main extends Applet implements Runnable {
 			g2d.fillRect(0, 0, SCREEN_W, SCREEN_H);
 
 			level.drawMap(g2d, this, hero);
+			entities.draw(g2d);
+			
 			//hero.drawBox(g2d, this);
 			hero.draw(g2d, this);
 			death.draw(g2d, this);
@@ -212,7 +216,7 @@ public class Main extends Applet implements Runnable {
 
 	public void gameUpdate(double delta) {
 		//System.out.println("delta is " +delta);
-		
+		entities.update(delta, hero);
 		
 		hero.move(keyboard.keyState(), delta);
 		death.move(delta);

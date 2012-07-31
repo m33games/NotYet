@@ -27,48 +27,51 @@ public class Level {
 	private EntityManager em;
 
 	private Random rand;
-	
+
 	private int anchor;
 
-	public Level() {
+	public Level(EntityManager entities) {
 		rand = new Random();
 		cm = new ChunkManager();
-		em = new EntityManager();
+		em = entities;
 
 		// Level size is fixed for now, it may become dynamic
 		level = new char[1000][2000];
 		anchor = 990;
-		
+
 		loadSingleFile("chunkTest");
-		
+
 		totRow = tempRow;
-		
+
 		/*
 		 * for now it load all the chunks in series, from 1 to 4, and it compose
 		 * them in a single level
 		 */
 		for (int i = 1; i < 50; i++) {
-			
+
 			int j = rand.nextInt(5) + 1;
 
 			Chunk ch = cm.getChunk(j);
 			char[][] a = ch.getArray();
-			
-			// create entities
-			for (int k = 0; k < ch.getMovNum() ; k++){
-				int sx = ch.sx[k]*TILE_SIZE;
-				int ex = ch.ex[k]*TILE_SIZE;
-				int sy = ch.sy[k]*TILE_SIZE;
-				int ey = ch.ey[k]*TILE_SIZE;
-				Platform p = new Platform(sx, ex, sy, ey);
-				
-			}
 
 			for (int r = 0; r < a.length; r++) {
 				for (int c = 0; c < a[0].length; c++) {
 					level[r + anchor - ch.getAnchorIn()][c + totCol] = a[r][c];
 				}
 			}
+
+			// create entities
+			for (int k = 0; k < ch.getMovNum(); k++) {
+				int sx = (ch.sx[k] + totCol) * TILE_SIZE;
+				int ex = (ch.ex[k] + totCol) * TILE_SIZE;
+				int sy = (ch.sy[k] + anchor - ch.getAnchorIn()) * TILE_SIZE;
+				int ey = (ch.ey[k] + anchor - ch.getAnchorIn()) * TILE_SIZE;
+				Platform p = new Platform(sx, ex, sy, ey);
+				p.setId(1);
+			
+				em.add(p);
+			}
+
 			anchor = anchor - (ch.getAnchorIn() - ch.getAnchorOut());
 
 			totCol += a[0].length;
@@ -105,40 +108,42 @@ public class Level {
 					tempRow = 0;
 					// command
 					String[] tokens = strLine.split("[ ]+");
-					for (int i = 0; i < tokens.length; i++){
+					for (int i = 0; i < tokens.length; i++) {
 						String[] command = tokens[i].split(":");
-						if(command[0].equals("time")){				// time
+						if (command[0].equals("time")) { // time
 							// save time
-						} else if (command[0].equals("chunk")){
-							int id = Integer.parseInt(command[1]);	// chunk ID
+						} else if (command[0].equals("chunk")) {
+							int id = Integer.parseInt(command[1]); // chunk ID
 							// create chunk
 							tempChunk = new Chunk();
 							// save chunk ID
 							tempChunk.setID(id);
 							cm.add(id, tempChunk);
-						} else if (command[0].equals("size")){		// size
+						} else if (command[0].equals("size")) { // size
 							int row = Integer.parseInt(command[1]);
 							int col = Integer.parseInt(command[2]);
-							
-							tempChunk.setChunk(row,col);
+
+							tempChunk.setChunk(row, col);
 							tempArray = tempChunk.getArray();
-						} else if (command[0].equals("anchor")){	// anchor
+						} else if (command[0].equals("anchor")) { // anchor
 							int aIn = Integer.parseInt(command[1]);
 							int aOut = Integer.parseInt(command[2]);
 							tempChunk.setAnchors(aIn, aOut);
-						} else if (command[0].equals("movNum")){	// movable number
+						} else if (command[0].equals("movNum")) { // movable
+																	// number
 							int num = Integer.parseInt(command[1]);
 							tempChunk.setPlatformNum(num);
-						} else if (command[0].equals("mov")){	// movable platforms
+						} else if (command[0].equals("mov")) { // movable
+																// platforms
 							int sx = Integer.parseInt(command[1]);
 							int ex = Integer.parseInt(command[2]);
 							int sy = Integer.parseInt(command[3]);
 							int ey = Integer.parseInt(command[4]);
 							tempChunk.setPlatform(sx, ex, sy, ey);
 						}
-						
+
 					}
-					
+
 				} else {
 					// fill array
 					for (int i = 0; i < strLine.length(); i++) {
