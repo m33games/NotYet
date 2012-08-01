@@ -219,7 +219,7 @@ public class Main extends Applet implements Runnable {
 		entities.update(delta, hero);
 		
 		hero.move(keyboard.keyState(), delta);
-		death.move(delta);
+		//death.move(delta);  DEATH DISABLED
 
 		if (death.heroReached(hero)) {
 			gameState = MAIN_MENU;

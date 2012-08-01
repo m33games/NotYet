@@ -12,8 +12,8 @@ import m33.util.*;
 
 public class Entity {
 	// Constants
-	private final int WIDTH = 32;
-	private final int HEIGHT = 32;
+	private int WIDTH = 32;
+	private int HEIGHT = 32;
 	
 	private final int TILE_SIZE = 32;
 	private final int TSHEET_SIZE = 16;
@@ -61,6 +61,10 @@ public class Entity {
 	
 	public Point2D getHitSize(){
 		return hitSize;
+	}
+	
+	public Point2D getBoxOff(){
+		return boxOff;
 	}
 
 	public int getWidth() {
@@ -184,10 +188,13 @@ public class Entity {
 	}
 	
 	public void setHitBox(double w, double h){
-		double left = this.getPosX() + (this.getWidth()/2) - (w/2);
-		double top = this.getPosY() + this.getHeight() - h;
+		boxOff.setLocation((this.getWidth() - w)/2, this.getHeight() - h);
+		double left = this.getPosX() + boxOff.getX();
+		double top = this.getPosY() + boxOff.getY();
 		hitBox.setLocation(left, top);
 		hitSize.setLocation(w, h);
+		
+		System.out.println("box "+boxOff.getX()+" "+boxOff.getY());
 	}
 	
 	public boolean collision(Entity e){
@@ -213,7 +220,7 @@ public class Entity {
 		} if( r.contains(eHit.getX(), eHit.getY() + e.getHitSize().getY())){
 			// it contains the bottom-left corner, it can be top or left collision
 			if(eHit.getY() + e.getHitSize().getY() - hitBox.getY()  < hitBox.getX() + hitSize.getX() - eHit.getX()){ // top collision
-				e.bottomColl(hitBox.getY());
+				e.bottomColl(hitBox.getY(), this);
 			} else { // left collision
 				e.leftColl(hitBox.getX() + hitSize.getX());
 			}
@@ -221,10 +228,19 @@ public class Entity {
 		} else if (r.contains(eHit.getX() + e.getHitSize().getX(), eHit.getY() + e.getHitSize().getY() )) { 
 			// it contains the bottom right corner, it can be top or right
 			if(eHit.getY() + e.getHitSize().getY() - hitBox.getY() < eHit.getX() + e.getHitSize().getX() - hitBox.getX() ){ // bottom collision
-				e.bottomColl(hitBox.getY());
+				e.bottomColl(hitBox.getY(), this);
 			} else { // right colllision
 				e.rightColl(hitBox.getX());
 			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean hole(Entity e){
+		if (e.getHitBox().getX() + e.getHitSize().getX() < getHitBox().getX() ||
+				e.getHitBox().getX() > getHitBox().getX() + getHitSize().getY()){
 			return true;
 		} else {
 			return false;
@@ -235,7 +251,7 @@ public class Entity {
 		setPosY(y);
 	}
 	
-	public void bottomColl(double y){
+	public void bottomColl(double y, Entity anchor){
 		setPosY(y - HEIGHT);
 	}
 	

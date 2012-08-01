@@ -40,6 +40,8 @@ public class Hero extends Entity {
 	public CameraBox cameraBox;
 	
 	private boolean dead = false;
+	
+	private Entity anchorEntity;
 
 	public Hero() {
 		super();
@@ -209,20 +211,27 @@ public class Hero extends Entity {
 	}
 	
 	public void platformMove(PressedKey key){
+		
 
 		if (key.isUp()) {
+			
 			startJumpTime = System.currentTimeMillis();
 			jumpState = JUMPING;
 			setVelY(-400);
 			incPosY(getVelY() * delta);
-
+			
 			if (currentLevel.topCollision(this)) {
 				jumpState = FALLING;
 				setVelY(0);
 			}
+		} else {		
+			setPosY(anchorEntity.getPosY() - getHeight());
+			//incPosY((getVelY() + anchorEntity.getVelY()) * delta);
 		}
+		
+		
 		if (key.isDown()) {
-			jumpState = FALLING;
+			// behavior undefined
 		}
 
 		if (key.isRight()) {
@@ -252,29 +261,38 @@ public class Hero extends Entity {
 		}
 
 		// Move hor and check hor collision
-		incPosX(getVelX() * delta);
+		incPosX((getVelX()+anchorEntity.getVelX()) * delta);
+		
+		if(anchorEntity.hole(this)){
+			jumpState = FALLING;
+		}
 		
 	}
 	
 	////////////////// COLLISIONS ///////////////////////////////////
 	public void topColl(double y){
 		setPosY(y);
+		setVelY(150);
 		if(jumpState == JUMPING){
 			jumpState = FALLING;
 		}
 	}
 	
-	public void bottomColl(double y){
+	public void bottomColl(double y, Entity anchor){
 		setPosY(y - getHitSize().getY());
+		anchorEntity = anchor;
 		jumpState = PLATFORM;
+		setVelY(0);
 	}
 	
 	public void leftColl(double x){
 		setPosX(x);
+		setVelX(0);
 	}
 	
 	public void rightColl(double x){
 		setPosX(x - getHitSize().getX());
+		setVelX(0);
 	}
 	///////////////////////////////////////////////////////////////////
 
@@ -304,7 +322,7 @@ public class Hero extends Entity {
 				+ TILE_SIZE, TSHEET_SIZE*animIndex, 0, (TSHEET_SIZE*(animIndex +1))-1, TSHEET_SIZE-1, a);
 		
 		g.setColor(Color.pink);
-		g.drawRect(boxX, boxY, (int) getHitSize().getX() , (int) getHitSize().getY() );
+		//g.drawRect(boxX, boxY, (int) getHitSize().getX() , (int) getHitSize().getY() );
 	}
 
 	public void drawBox(Graphics2D g, Applet a) {

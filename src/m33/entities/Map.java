@@ -95,7 +95,8 @@ public class Map {
 			if (tm.cl[r][c] != null && tm.cl[r][c].isDeath()) {
 				hero.dies();
 			} else if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
-				hero.setPosX((double) (c * TILE_SIZE) - hero.getHitSize().getX());
+				hero.setPosX((double) (c * TILE_SIZE) - hero.getHitSize().getX() - hero.getBoxOff().getX());
+				hero.setVelX(0);
 				return true;
 			}
 		}
@@ -106,7 +107,8 @@ public class Map {
 		for (r = heroTop; r <= heroBottom; r++) {
 			tm.cl[r][c].checked();
 			if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
-				hero.setPosX((double) (c * TILE_SIZE) + hero.getHitSize().getX());
+				hero.setPosX((double) ((c+1) * TILE_SIZE) - hero.getBoxOff().getX());
+				hero.setVelX(0);
 				return true;
 			}
 		}
@@ -131,7 +133,7 @@ public class Map {
 			if (tm.cl[r][c] != null && tm.cl[r][c].isDeath()) {
 				hero.dies();
 			} else if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
-				hero.setPosY((double) (r * TILE_SIZE) + hero.getHitSize().getY());
+				hero.setPosY((double) ((r+1) * TILE_SIZE) );
 				return true;
 			}
 		}
@@ -161,7 +163,7 @@ public class Map {
 			for (c = heroLeft; c <= heroRight; c++) {
 				tm.cl[r][c].checked();
 				if (tm.cl[r][c] != null && tm.cl[r][c].isSolid()) {
-					hero.setPosY((double) (r * TILE_SIZE) - hero.getHitSize().getY());
+					hero.setPosY((double) (r * TILE_SIZE) - hero.getHitSize().getY() - hero.getBoxOff().getY());
 					return true;
 				}
 			}
