@@ -48,6 +48,7 @@ public class Main extends Applet implements Runnable {
 	private EntityManager entities;
 
 	private GeneratingScreen generate;
+	private int currentLevel = 0;
 
 	// game state
 	private boolean isRunning = false;
@@ -78,7 +79,10 @@ public class Main extends Applet implements Runnable {
 
 		fontManager = new FontManager();
 		
-		generate = new GeneratingScreen(SCREEN_W, SCREEN_H);
+		currentLevel = 0;
+		generate = new GeneratingScreen(SCREEN_W, SCREEN_H, currentLevel);
+		//generate.setLevel(currentLevel);
+		
 
 		//entities = new EntityManager();
 	}
@@ -110,7 +114,8 @@ public class Main extends Applet implements Runnable {
 			mainMenu.drawMenu(g2d);
 			break;
 		case GENERATE:
-			generate.drawMenu(g2d);
+			currentLevel++;
+			generate.drawMenu(g2d, currentLevel);
 			break;
 		case PLAYING:
 			camera.update(hero);
@@ -183,8 +188,15 @@ public class Main extends Applet implements Runnable {
 				}
 				break;
 			case GENERATE:
-				generate = new GeneratingScreen(SCREEN_W, SCREEN_H);
+				generate = new GeneratingScreen(SCREEN_W, SCREEN_H, currentLevel);
+				long temp = System.currentTimeMillis();
+				
+				//generate.setLevel(currentLevel);
+				System.out.println("current level "+ currentLevel);
 				gameReset();
+				
+				while(System.currentTimeMillis() - temp < 1000){}
+				
 				delta = 0.0;
 				if (level.isLoaded()) {
 					gameState = PLAYING;
@@ -195,6 +207,8 @@ public class Main extends Applet implements Runnable {
 					delta = 0.2;
 				}
 				gameUpdate(delta);
+				
+				
 				break;
 			}
 
@@ -226,6 +240,10 @@ public class Main extends Applet implements Runnable {
 		}
 		if (hero.isDead()){
 			gameState = MAIN_MENU;
+		}
+		// If the level is finished, generate the next one
+		if (hero.getPosX() > level.getEnd()){
+			gameState = GENERATE;
 		}
 		
 	}

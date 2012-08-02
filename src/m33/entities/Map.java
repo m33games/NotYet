@@ -214,4 +214,8 @@ public class Map {
 	public double getSpawnY(){
 		return level1.getSpawnY();
 	}
+	
+	public double getEnd(){
+		return (double) level1.getLevelEnd() * TILE_SIZE;
+	}
 }

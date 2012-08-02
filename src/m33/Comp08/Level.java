@@ -22,6 +22,7 @@ public class Level {
 	private int tempCol = 0;
 	
 	private double spawnX, spawnY;
+	private int endLevel;
 
 	private char[][] nextChunk;
 	private char[][][] chunks;
@@ -51,10 +52,10 @@ public class Level {
 		 * for now it load all the chunks in series, from 1 to 4, and it compose
 		 * them in a single level
 		 */
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < 10; i++) {
 
-			int j = rand.nextInt(6) + 1;
-			//int j = 2; // to test a single chunk
+			//int j = rand.nextInt(6) + 1;
+			int j = 2; // to test a single chunk
 			if(i == 0){
 				ch = cm.getChunk(0);
 				
@@ -90,6 +91,19 @@ public class Level {
 
 			totCol += a[0].length;
 		}
+		
+		// Level ends before the last chunk
+		endLevel = totCol;
+		
+		ch = cm.getChunk(0);
+		char[][] a = ch.getArray();
+
+		for (int r = 0; r < a.length; r++) {
+			for (int c = 0; c < a[0].length; c++) {
+				level[r + anchor - ch.getAnchorIn()][c + totCol] = a[r][c];
+			}
+		}
+		totCol += a[0].length;
 
 		ROWS = totRow;
 		COL = totCol;
@@ -109,6 +123,10 @@ public class Level {
 	
 	public double getSpawnY(){
 		return spawnY;
+	}
+	
+	public int getLevelEnd(){
+		return endLevel;
 	}
 
 	private void loadSingleFile(String chunkName) {
