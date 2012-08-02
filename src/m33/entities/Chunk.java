@@ -8,6 +8,9 @@ public class Chunk {
 	private int time;
 	private int anchorIn;
 	private int anchorOut;
+	private int numW = 1;
+	private int numH = 1;
+	private int spawnX, spawnY;
 
 	public int[] sx, ex, sy, ey, vel;
 
@@ -58,7 +61,23 @@ public class Chunk {
 	public int getMovNum(){
 		return movNum;
 	}
+	
+	public int getNumW(){
+		return numW;
+	}
+	
+	public int getNumH(){
+		return numH;
+	}
+	
+	public int getSpawnX(){
+		return spawnX;
+	}
 
+	public int getSpawnY(){
+		return spawnY;
+	}
+	
 	// modificators
 	public void setID(int id) {
 		this.id = id;
@@ -71,6 +90,11 @@ public class Chunk {
 	public void setAnchors(int aIn, int aOut) {
 		anchorIn = aIn;
 		anchorOut = aOut;
+	}
+	
+	public void setSpawn(int x, int y){
+		spawnX = x;
+		spawnY = y;
 	}
 
 	public void setPlatformNum(int n) {
@@ -87,5 +111,10 @@ public class Chunk {
 		this.sy[iter] = sy;
 		this.ey[iter] = ey;
 		iter++;
+	}
+	
+	public void platformWH(int w, int h){
+		numW = w;
+		numH = h;
 	}
 }

@@ -10,192 +10,42 @@ import java.awt.geom.Rectangle2D;
 
 import m33.util.*;
 
-public class Entity {
+public class Entity extends BasicEntity {
 	// Constants
-	private int WIDTH = 32;
-	private int HEIGHT = 32;
 	
-	private final int TILE_SIZE = 32;
-	private final int TSHEET_SIZE = 16;
-	private final int TSHEET_W =10;
-	
-	private int id;
-
-	private Point2D pos;
-	private Point2D oldPos;
-	private Point2D vel;
-
-	private Point2D hitBox;
-	private Point2D hitSize;
-	private Point2D boxOff;
-
-	protected Image image;
-	private Loader loader;
-	
-	protected Camera camera;
+	private int numW = 1;
+	private int numH = 1;
 
 	private boolean debug;
 
 	// Constructor
 	public Entity() {
-		loader = new Loader();
-		pos = new Point2D.Double(0.0, 0.0);
-		oldPos = new Point2D.Double(0.0, 0.0);
-		vel = new Point2D.Double(0.0, 0.0);
-
-		hitBox = new Point2D.Double(pos.getX(), pos.getY());
-		hitSize = new Point2D.Double((double) WIDTH, (double) (HEIGHT));
-		boxOff = new Point2D.Double(0, 0);
+		super();
 
 		debug = true;
 	}
 
 	// Accessors
-	public Camera getCamera(){
-		return camera;
-	}
-	
-	public Point2D getHitBox() {
-		return hitBox;
-	}
-	
-	public Point2D getHitSize(){
-		return hitSize;
-	}
-	
-	public Point2D getBoxOff(){
-		return boxOff;
-	}
-
-	public int getWidth() {
-		return WIDTH;
-	}
-
-	public int getHeight() {
-		return HEIGHT;
-	}
-
-	public double getPosX() {
-		return pos.getX();
-	}
-
-	public double getPosY() {
-		return pos.getY();
-	}
-
-	public double getOldPosX() {
-		return oldPos.getX();
-	}
-
-	public double getOldPosY() {
-		return oldPos.getY();
-	}
-
-	public double getVelX() {
-		return vel.getX();
-	}
-
-	public double getVelY() {
-		return vel.getY();
-	}
-
-	public Point2D getPos() {
-		return pos;
-	}
-
-	public Point2D getVel() {
-		return vel;
-	}
-
 
 	// /////////////////////////////////////////
 
 	// Modifiers
-	public void setPosX(double x) {
-		pos.setLocation(x, pos.getY());
-		hitBox.setLocation(pos.getX() + boxOff.getX(), pos.getY() + boxOff.getY());
-	}
-
-	public void setPosY(double y) {
-		pos.setLocation(pos.getX(), y);
-		hitBox.setLocation(pos.getX() + boxOff.getX(), pos.getY() + boxOff.getY());
-	}
-
-	public void incPosX(double x) {
-		pos.setLocation(pos.getX() + x, pos.getY());
-		hitBox.setLocation(pos.getX() + boxOff.getX(), pos.getY() + boxOff.getY());
-	}
-
-	public void incPosY(double y) {
-		pos.setLocation(pos.getX(), pos.getY() + y);
-		hitBox.setLocation(pos.getX() + boxOff.getX(), pos.getY() + boxOff.getY());
-	}
-
-	public void setPos(double x, double y) {
-		pos.setLocation(x, y);
-		hitBox.setLocation(pos.getX() + boxOff.getX(), pos.getY() + boxOff.getY());
-	}
-
-	public void setPos(Point2D p) {
-		pos.setLocation(p);
-		hitBox.setLocation(pos.getX() + boxOff.getX(), pos.getY() + boxOff.getY());
-	}
-
-	public void incPos(double x, double y) {
-		pos.setLocation(pos.getX() + x, pos.getY() + y);
-		hitBox.setLocation(pos.getX() + boxOff.getX(), pos.getY() + boxOff.getY());
-	}
-
-	public void setVelX(double velX) {
-		vel.setLocation(velX, vel.getY());
-	}
-
-	public void setVelY(double velY) {
-		vel.setLocation(vel.getX(), velY);
-	}
-
-	public void incVelX(double velX) {
-		vel.setLocation(vel.getX() + velX, vel.getY());
-	}
-
-	public void incVelY(double velY) {
-		vel.setLocation(vel.getX(), vel.getY() + velY);
-	}
-
-	public void setVel(double velX, double velY) {
-		vel.setLocation(velX, velY);
-	}
-
-	public void setVel(Point2D p) {
-		vel.setLocation(p);
-	}
-
-	public void incVel(double x, double y) {
-		vel.setLocation(vel.getX() + x, vel.getY() + y);
-	}
-	
-	public void setCamera(Camera camera){
-		this.camera = camera;
-	}
-	
 	public void setId(int i){
 		id = i;
 	}
 	
-	public void move(){
-		incPosX(getVelX());
-		incPosY(getVelY());
+	public void setNumWH(int w, int h){
+		numW = w;
+		numH = h;
+		
+		multipleTileHit(w, h);
 	}
 	
-	public void setHitBox(double w, double h){
-		boxOff.setLocation((this.getWidth() - w)/2, this.getHeight() - h);
-		double left = this.getPosX() + boxOff.getX();
-		double top = this.getPosY() + boxOff.getY();
-		hitBox.setLocation(left, top);
-		hitSize.setLocation(w, h);
-		
-		System.out.println("box "+boxOff.getX()+" "+boxOff.getY());
+	public void multipleTileHit(int w, int h){
+		hitSize.setLocation(w*getWidth(), h*getHeight());
 	}
+	
+	// COLLISION //
 	
 	public boolean collision(Entity e){
 		Rectangle2D r = new Rectangle2D.Double(hitBox.getX(), hitBox.getY(), hitSize.getX(), hitSize.getY());
@@ -277,17 +127,22 @@ public class Entity {
 		int localX = (int) (pos.getX() - c.getXOff());
 		int localY = (int) (pos.getY() - c.getYOff());
 		
-		//g.drawImage(image, localX, localY, a);
-		//if (debug) {
-		//	g.drawRect(localX, localY, WIDTH, HEIGHT);
-		//}
-		
 		if(localX > 0 && localX < 650){
-		//System.out.println("draw " + localX + " " + localY + " " + (localX + TILE_SIZE) + " " + (localY + TILE_SIZE));
-
-		g.drawImage(img, localX, localY, localX+TILE_SIZE, localY+TILE_SIZE, 
-				TSHEET_SIZE*(id%TSHEET_W), TSHEET_SIZE*(id/TSHEET_SIZE), TSHEET_SIZE*((id%TSHEET_W)+1)-1, TSHEET_SIZE*((id/TSHEET_W)+1)-1, null);
+			
+		for(int i = 0; i < numH; i++){
+			for(int j = 0; j < numW; j++){
+				localX = (int) ((pos.getX() + j*getWidth()) - c.getXOff());
+				localY = (int) ((pos.getY() + i*getWidth())- c.getYOff());
+				
+				g.drawImage(img, localX, localY, localX+TILE_SIZE, localY+TILE_SIZE, 
+						TSHEET_SIZE*(id%TSHEET_W), TSHEET_SIZE*(id/TSHEET_SIZE), TSHEET_SIZE*((id%TSHEET_W)+1)-1, TSHEET_SIZE*((id/TSHEET_W)+1)-1, null);
+				}
+			}
 		}
+		
+		//g.drawImage(img, localX, localY, localX+TILE_SIZE, localY+TILE_SIZE, 
+		//		TSHEET_SIZE*(id%TSHEET_W), TSHEET_SIZE*(id/TSHEET_SIZE), TSHEET_SIZE*((id%TSHEET_W)+1)-1, TSHEET_SIZE*((id/TSHEET_W)+1)-1, null);
+		//}
 	}
 
 	public void moveBack() {

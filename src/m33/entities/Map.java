@@ -206,4 +206,12 @@ public class Map {
 	public boolean isLoaded() {
 		return loaded;
 	}
+	
+	public double getSpawnX(){
+		return level1.getSpawnX();
+	}
+	
+	public double getSpawnY(){
+		return level1.getSpawnY();
+	}
 }

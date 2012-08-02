@@ -20,6 +20,8 @@ public class Level {
 
 	private int tempRow = 0;
 	private int tempCol = 0;
+	
+	private double spawnX, spawnY;
 
 	private char[][] nextChunk;
 	private char[][][] chunks;
@@ -40,18 +42,29 @@ public class Level {
 		anchor = 990;
 
 		loadSingleFile("chunkTest");
+		Chunk ch = new Chunk();
 
 		totRow = tempRow;
+		totCol = 0;
 
 		/*
 		 * for now it load all the chunks in series, from 1 to 4, and it compose
 		 * them in a single level
 		 */
-		for (int i = 1; i < 50; i++) {
+		for (int i = 0; i < 50; i++) {
 
-			int j = rand.nextInt(5) + 1;
-
-			Chunk ch = cm.getChunk(j);
+			int j = rand.nextInt(6) + 1;
+			//int j = 2; // to test a single chunk
+			if(i == 0){
+				ch = cm.getChunk(0);
+				
+				// Chunk 0 MUST define a spawn point
+				spawnX = (totCol + ch.getSpawnX()) * TILE_SIZE;
+				spawnY = (anchor - ch.getAnchorIn() + ch.getSpawnY()) * TILE_SIZE;
+			} else {
+				ch = cm.getChunk(j);
+			}
+			
 			char[][] a = ch.getArray();
 
 			for (int r = 0; r < a.length; r++) {
@@ -68,6 +81,7 @@ public class Level {
 				int ey = (ch.ey[k] + anchor - ch.getAnchorIn()) * TILE_SIZE;
 				Platform p = new Platform(sx, ex, sy, ey);
 				p.setId(1);
+				p.setNumWH(ch.getNumW(), ch.getNumH());
 			
 				em.add(p);
 			}
@@ -87,6 +101,14 @@ public class Level {
 
 	public int getCol() {
 		return COL;
+	}
+	
+	public double getSpawnX(){
+		return spawnX;
+	}
+	
+	public double getSpawnY(){
+		return spawnY;
 	}
 
 	private void loadSingleFile(String chunkName) {
@@ -140,8 +162,15 @@ public class Level {
 							int sy = Integer.parseInt(command[3]);
 							int ey = Integer.parseInt(command[4]);
 							tempChunk.setPlatform(sx, ex, sy, ey);
+						} else if (command[0].equals("numWH")){
+							int numW = Integer.parseInt(command[1]);
+							int numH = Integer.parseInt(command[2]);
+							tempChunk.platformWH(numW, numH);
+						} else if (command[0].equals("spawn")){
+							int spawnX = Integer.parseInt(command[1]);
+							int spawnY = Integer.parseInt(command[2]);
+							tempChunk.setSpawn(spawnX, spawnY);
 						}
-
 					}
 
 				} else {

@@ -59,6 +59,10 @@ public class Hero extends Entity {
 
 	public void updateMap(Map level) {
 		currentLevel = level;
+		
+		// Spawn point is also set
+		setPosX(currentLevel.getSpawnX());
+		setPosY(currentLevel.getSpawnY());
 	}
 
 	public void move(PressedKey key, double delta) {

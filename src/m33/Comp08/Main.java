@@ -91,7 +91,7 @@ public class Main extends Applet implements Runnable {
 		hero.load("hero.png");
 
 		level = new Map(entities);
-		hero.updateMap(level);
+		hero.updateMap(level); // I also set spawn point here
 
 		camera = new Camera();
 
