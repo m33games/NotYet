@@ -248,6 +248,8 @@ public class Hero extends Entity {
 			setPosY(anchorEntity.getPosY() - getHeight());
 			//incPosY((getVelY() + anchorEntity.getVelY()) * delta);
 		}
+
+		currentLevel.topCollision(this);
 		
 		
 		if (key.isDown()) {
@@ -282,6 +284,7 @@ public class Hero extends Entity {
 
 		// Move hor and check hor collision
 		incPosX((getVelX()+anchorEntity.getVelX()) * delta);
+		currentLevel.horizontalCollision(this);
 		
 		if(anchorEntity.hole(this)){
 			jumpState = FALLING;
