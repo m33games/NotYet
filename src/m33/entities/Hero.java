@@ -18,6 +18,12 @@ public class Hero extends Entity {
 	private final int AIR = 2;
 	private final int FALLING = 3;
 	private final int PLATFORM = 4;
+	
+	private final int FACING = 0;
+	private final int RIGHT = 3;
+	private final int LEFT = 6;
+	
+	private int animState = FACING;
 
 	private final int ACC_GRAVITY = 40;
 	private final int ACC_X = 40;
@@ -29,7 +35,9 @@ public class Hero extends Entity {
 	private final int ANIM_RATE = 1000/10;
 	private double lastAnim;
 	private int animIndex = 0;
+	private int anIn = 0;
 	private final int ANIM_FRAME_NUM = 3;
+	private final int SH_N_ROW = 20;
 
 	private int jumpState = FALLING;
 	private long startJumpTime;
@@ -52,7 +60,7 @@ public class Hero extends Entity {
 		load("hero.png");
 		lastAnim = System.currentTimeMillis();
 		
-		setHitBox(TILE_SIZE, TILE_SIZE);
+		setHitBox(TILE_SIZE-10, TILE_SIZE);
 
 		cameraBox = new CameraBox();
 	}
@@ -88,6 +96,14 @@ public class Hero extends Entity {
 		default:
 			jumpState = FALLING;
 			break;
+		}
+		
+		if(key.isRight()){
+			animState = RIGHT;
+		} else if(key.isLeft()){
+			animState = LEFT;
+		} else {
+			animState = FACING;
 		}
 
 		cameraBox.update(this);
@@ -290,21 +306,25 @@ public class Hero extends Entity {
 	}
 	
 	public void leftColl(double x){
-		setPosX(x);
+		setPosX(x - getBoxOff().getX());
 		setVelX(0);
 	}
 	
 	public void rightColl(double x){
-		setPosX(x - getHitSize().getX());
+		setPosX(x - getWidth() + getBoxOff().getX());
 		setVelX(0);
 	}
 	///////////////////////////////////////////////////////////////////
 
 	public void animate() {
+		if(anIn < 0 || anIn > 2){ anIn = 0;	}
+		
 		if(System.currentTimeMillis() - lastAnim > ANIM_RATE){
-			animIndex = (animIndex + 1)% ANIM_FRAME_NUM;
+			anIn = (anIn + 1)% ANIM_FRAME_NUM;
 			lastAnim = System.currentTimeMillis();
 		}
+		
+		animIndex = anIn + animState;
 	}
 	
 	public void dies(){
@@ -323,16 +343,11 @@ public class Hero extends Entity {
 		int boxY = (int) (getHitBox().getY() - camera.getYOff());
 
 		g.drawImage(image, localX, localY, localX + TILE_SIZE, localY
-				+ TILE_SIZE, TSHEET_SIZE*animIndex, 0, (TSHEET_SIZE*(animIndex +1))-1, TSHEET_SIZE-1, a);
+				+ TILE_SIZE, TSHEET_SIZE* (animIndex%SH_N_ROW), TSHEET_SIZE* (animIndex/SH_N_ROW), 
+				TSHEET_SIZE*((animIndex%SH_N_ROW)+1), TSHEET_SIZE*((animIndex/SH_N_ROW)+1), a);
 		
 		g.setColor(Color.pink);
 		//g.drawRect(boxX, boxY, (int) getHitSize().getX() , (int) getHitSize().getY() );
 	}
 
-	public void drawBox(Graphics2D g, Applet a) {
-		int localX = (int) (cameraBox.getX() - camera.getXOff());
-		int localY = (int) (cameraBox.getY() - camera.getYOff());
-
-		cameraBox.draw(g, camera);
-	}
 }

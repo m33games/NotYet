@@ -54,8 +54,8 @@ public class Level {
 		 */
 		for (int i = 0; i < 10; i++) {
 
-			//int j = rand.nextInt(6) + 1;
-			int j = 2; // to test a single chunk
+			int j = rand.nextInt(6) + 1;
+			//int j = 2; // to test a single chunk
 			if(i == 0){
 				ch = cm.getChunk(0);
 				
